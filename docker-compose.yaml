@@ -1,0 +1,69 @@
+version: "3.9"
+
+services:
+  tdarr:
+    container_name: tdarr
+    # Custom image with SVT-AV1-HDR encoder
+    # Build with: ./build.sh
+    image: tdarr-svt-av1-hdr:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    # Required for s6-overlay with rootless podman
+    privileged: true
+    ports:
+      - "8265:8265"  # Web UI
+      - "8266:8266"  # Server communication port
+    environment:
+      - TZ=UTC
+      - PUID=1000
+      - PGID=1000
+      - UMASK_SET=002
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=true
+      - inContainer=true
+      - ffmpegVersion=6
+      - nodeName=InternalNode
+      # Path to custom FFmpeg with SVT-AV1-HDR
+      - FFMPEG_SVT_AV1_HDR=/opt/ffmpeg-svt-av1-hdr/bin/ffmpeg
+    volumes:
+      # Tdarr configuration and data (`:Z` for SELinux on Fedora)
+      - ./tdarr/server:/app/server:Z
+      - ./tdarr/configs:/app/configs:Z
+      - ./tdarr/logs:/app/logs:Z
+      # Transcode cache - use fast storage (SSD recommended)
+      - ./tdarr/transcode_cache:/temp:Z
+      # Media library - adjust path to your media location
+      - /home/dark-moon/Videos/tdarr_stuff:/media:Z
+    # Uncomment below for hardware acceleration (NVIDIA GPU)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  # Optional: Separate node for distributed transcoding
+  # tdarr-node:
+  #   container_name: tdarr-node
+  #   image: ghcr.io/haveagitgat/tdarr_node:latest
+  #   restart: unless-stopped
+  #   environment:
+  #     - TZ=UTC
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - UMASK_SET=002
+  #     - nodeName=ExternalNode
+  #     - serverIP=tdarr
+  #     - serverPort=8266
+  #     - inContainer=true
+  #     - ffmpegVersion=6
+  #   volumes:
+  #     - ./tdarr/configs:/app/configs
+  #     - ./tdarr/logs:/app/logs
+  #     - ./tdarr/transcode_cache:/temp
+  #     - /path/to/your/media:/media

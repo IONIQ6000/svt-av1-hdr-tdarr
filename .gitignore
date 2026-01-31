@@ -1,0 +1,18 @@
+# Tdarr data (generated at runtime)
+tdarr/server/
+tdarr/configs/
+tdarr/logs/
+tdarr/transcode_cache/
+
+# Test/temp files
+*.mkv
+*.mp4
+*.webm
+*.avi
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Export archives (can be regenerated)
+*.tar.gz
