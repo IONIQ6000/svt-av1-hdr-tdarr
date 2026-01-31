@@ -14,5 +14,4 @@ tdarr/transcode_cache/
 .DS_Store
 Thumbs.db
 
-# Export archives (can be regenerated)
-*.tar.gz
+# Keep export archive for easy download
