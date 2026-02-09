@@ -170,7 +170,7 @@ cd /tmp && rm -rf svt-av1-hdr
 ### Step 5: Install av1an
 
 ```bash
-cargo install --git https://github.com/master-of-zen/Av1an.git av1an
+cargo install --git https://github.com/rust-av/Av1an.git --bin av1an
 ```
 
 ### Step 6: Download FFmpeg with SVT-AV1-HDR
@@ -459,7 +459,7 @@ flawlessmedia/av-rpm    # VapourSynth plugins
 ### Cargo Packages
 
 ```bash
-av1an    # from git: https://github.com/master-of-zen/Av1an.git
+av1an    # from git: https://github.com/rust-av/Av1an.git (NOT master-of-zen)
 ```
 
 ### Built from Source
