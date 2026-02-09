@@ -1,17 +1,33 @@
-# Tdarr data (generated at runtime)
-tdarr/server/
-tdarr/configs/
-tdarr/logs/
-tdarr/transcode_cache/
-
-# Test/temp files
+# Video files (don't commit media)
 *.mkv
 *.mp4
-*.webm
 *.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+*.ivf
+
+# Logs
+logs/
+*.log
+encode.log
+
+# Tdarr data (runtime generated)
+tdarr/
+
+# Temp files
+/tmp/
+*.tmp
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Keep export archive for easy download
+# IDE
+.vscode/
+.idea/
+
+# Build artifacts
+Build/
+build/

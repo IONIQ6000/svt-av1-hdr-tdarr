@@ -1,0 +1,146 @@
+{
+  "_id": "SVT_AV1_HDR_DEFAULT_V1",
+  "name": "SVT-AV1-HDR (GitHub Defaults) - 90% LIMIT",
+  "description": "SVT-AV1-HDR encoding with CRF 35, Preset 4, Tune VQ. Removes Russian audio/subs and embedded pictures.",
+  "tags": "av1,hdr,svt-av1-hdr",
+  "flowPlugins": [
+    {
+      "name": "Input File",
+      "sourceRepo": "Community",
+      "pluginName": "inputFile",
+      "version": "1.0.0",
+      "inputsDB": {
+        "fileAccessChecks": "false",
+        "pauseNodeIfAccessChecksFail": "false"
+      },
+      "fpEnabled": true,
+      "id": "step1",
+      "position": { "x": 0, "y": 0 }
+    },
+    {
+      "name": "Check File Extension",
+      "sourceRepo": "Community",
+      "pluginName": "checkFileExtension",
+      "version": "1.0.0",
+      "inputsDB": {
+        "extensions": "mkv,mp4,mov,m4v,ts"
+      },
+      "fpEnabled": true,
+      "id": "step2",
+      "position": { "x": 200, "y": 0 }
+    },
+    {
+      "name": "Check Video Codec (Skip AV1)",
+      "sourceRepo": "Community",
+      "pluginName": "checkVideoCodec",
+      "version": "1.0.0",
+      "inputsDB": {
+        "codec": "av1"
+      },
+      "fpEnabled": true,
+      "id": "step3",
+      "position": { "x": 400, "y": 0 }
+    },
+    {
+      "name": "FFmpeg Start (For Cleanup)",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandStart",
+      "version": "1.0.0",
+      "inputsDB": {},
+      "fpEnabled": true,
+      "id": "step4",
+      "position": { "x": 600, "y": 0 }
+    },
+    {
+      "name": "Remove RU Streams",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandRemoveStreamByProperty",
+      "version": "1.0.0",
+      "inputsDB": {
+        "propertyToCheck": "tags.language",
+        "valuesToRemove": "ru,rus,ru-RU,ru_ru,ru_RU",
+        "condition": "includes"
+      },
+      "fpEnabled": true,
+      "id": "step5",
+      "position": { "x": 800, "y": 0 }
+    },
+    {
+      "name": "Remove Picture Streams",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandRemoveStreamByProperty",
+      "version": "1.0.0",
+      "inputsDB": {
+        "propertyToCheck": "codec_name",
+        "valuesToRemove": "mjpeg,png",
+        "condition": "includes"
+      },
+      "fpEnabled": true,
+      "id": "step6",
+      "position": { "x": 1000, "y": 0 }
+    },
+    {
+      "name": "Execute Cleanup",
+      "sourceRepo": "Community",
+      "pluginName": "ffmpegCommandExecute",
+      "version": "1.0.0",
+      "inputsDB": {},
+      "fpEnabled": true,
+      "id": "step7",
+      "position": { "x": 1200, "y": 0 }
+    },
+    {
+      "name": "SVT-AV1-HDR Encode (Defaults)",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "1.0.0",
+      "inputsDB": {
+        "pluginSourceId": "Local:Tdarr_Plugin_SVT_AV1_HDR",
+        "tune": "0",
+        "crf": "35",
+        "preset": "4",
+        "enable_hdr_curve": "false",
+        "container": "mkv",
+        "audio_codec": "copy",
+        "ffmpeg_path": "/opt/ffmpeg-svt-av1-hdr/bin/ffmpeg"
+      },
+      "fpEnabled": true,
+      "id": "step8",
+      "position": { "x": 1400, "y": 0 }
+    },
+    {
+      "name": "Final Size Check (<=90%)",
+      "sourceRepo": "Community",
+      "pluginName": "runClassicTranscodePlugin",
+      "version": "1.0.0",
+      "inputsDB": {
+        "pluginSourceId": "Community:Tdarr_Plugin_a9he_New_file_size_check",
+        "upperBound": "90",
+        "lowerBound": "0"
+      },
+      "fpEnabled": true,
+      "id": "step9",
+      "position": { "x": 1600, "y": 0 }
+    },
+    {
+      "name": "Move To Original Directory",
+      "sourceRepo": "Community",
+      "pluginName": "moveToOriginalDirectory",
+      "version": "1.0.0",
+      "fpEnabled": true,
+      "id": "step10",
+      "position": { "x": 1800, "y": 0 }
+    }
+  ],
+  "flowEdges": [
+    { "source": "step1", "sourceHandle": "1", "target": "step2", "id": "e1" },
+    { "source": "step2", "sourceHandle": "1", "target": "step3", "id": "e2" },
+    { "source": "step3", "sourceHandle": "2", "target": "step4", "id": "e3" },
+    { "source": "step4", "sourceHandle": "1", "target": "step5", "id": "e4" },
+    { "source": "step5", "sourceHandle": "1", "target": "step6", "id": "e5" },
+    { "source": "step6", "sourceHandle": "1", "target": "step7", "id": "e6" },
+    { "source": "step7", "sourceHandle": "1", "target": "step8", "id": "e7" },
+    { "source": "step8", "sourceHandle": "1", "target": "step9", "id": "e8" },
+    { "source": "step9", "sourceHandle": "1", "target": "step10", "id": "e9" }
+  ]
+}
